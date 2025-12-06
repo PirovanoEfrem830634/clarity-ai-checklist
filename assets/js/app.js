@@ -6,9 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startChecklist");
   const resetAllBtn = document.getElementById("resetChecklist");
   const commitAllBtn = document.getElementById("commitAll");
-  const checklistRoot = document.getElementById("checklistRoot");
+
+  // Supporto retrocompatibilità: se non esistono i nuovi root, usa quello vecchio
+  const legacyRoot = document.getElementById("checklistRoot");
+  const structuralRoot =
+    document.getElementById("checklistRootStructural") || legacyRoot;
+  const macroRoot = document.getElementById("checklistRootMacro") || null;
+
   const checklistCounter = document.getElementById("checklistCounter");
   const checklistScore = document.getElementById("checklistScore");
+  const checklistCounterMacro = document.getElementById("checklistCounterMacro");
+  const checklistScoreMacro = document.getElementById("checklistScoreMacro");
 
   const SCALE_LABELS = {
     0: "0 ★ - Does not meet the criteria",
@@ -16,13 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     2: "2 ★ - Meets some criteria, with gaps",
     3: "3 ★ - Adequately meets the criteria",
     4: "4 ★ - Meets criteria well",
-    5: "5 ★ - Model of best practice"
+    5: "5 ★ - Model of best practice",
   };
 
   let checklistData = null;
   let checklistState = {
     scores: {}, // { [itemId]: number }
-    committedGroups: {} // { [groupId]: true }
+    committedGroups: {}, // { [groupId]: true }
   };
 
   // ---- STATE HELPERS ----
@@ -34,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (parsed && typeof parsed === "object") {
         checklistState = {
           scores: parsed.scores || {},
-          committedGroups: parsed.committedGroups || {}
+          committedGroups: parsed.committedGroups || {},
         };
       }
     } catch (err) {
@@ -48,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         STATE_KEY,
         JSON.stringify({
           scores: checklistState.scores,
-          committedGroups: checklistState.committedGroups
+          committedGroups: checklistState.committedGroups,
         })
       );
     } catch (err) {
@@ -59,17 +67,26 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearState() {
     checklistState = {
       scores: {},
-      committedGroups: {}
+      committedGroups: {},
     };
     localStorage.removeItem(STATE_KEY);
   }
 
   // ---- RENDERING ----
   function buildChecklist(sections) {
-    checklistRoot.innerHTML = "";
+    if (structuralRoot) structuralRoot.innerHTML = "";
+    if (macroRoot) macroRoot.innerHTML = "";
 
     sections.forEach((section) => {
-      // Wrapper sezione (Structural / Macro-topic)
+      // Decidiamo dove appendere la sezione:
+      // se section.id inizia per "M" => Macro, altrimenti Structural
+      const isMacroSection =
+        typeof section.id === "string" &&
+        section.id.trim().toUpperCase().startsWith("M");
+
+      const targetRoot = isMacroSection ? macroRoot : structuralRoot;
+      if (!targetRoot) return;
+
       const sectionEl = document.createElement("div");
       sectionEl.className = "checklist-section";
       sectionEl.dataset.sectionId = section.id;
@@ -89,12 +106,24 @@ document.addEventListener("DOMContentLoaded", () => {
       sectionHeader.appendChild(sectionMax);
       sectionEl.appendChild(sectionHeader);
 
-      // Groups (microsezioni, es. Title)
+      // Groups (Title, Abstract, ecc.)
       section.groups.forEach((group) => {
         const groupId = `${section.id}-${group.code}`; // es. "S-TI"
+
         const groupEl = document.createElement("div");
-        groupEl.className = "group-card";
+        // Apple-style group + compat con stile precedente
+        groupEl.className = "group-card item-group";
         groupEl.dataset.groupId = groupId;
+
+        // Classe per colore arcobaleno basata su group.code o group.id/label
+        const colorKey =
+          (group.code || group.id || group.label || "")
+            .toString()
+            .toLowerCase()
+            .replace(/\s+/g, "-");
+        if (colorKey) {
+          groupEl.classList.add(`item-group--${colorKey}`);
+        }
 
         if (checklistState.committedGroups[groupId]) {
           groupEl.classList.add("group-committed");
@@ -107,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         groupLeft.className = "group-header-left";
 
         const groupLabel = document.createElement("div");
-        groupLabel.className = "group-label";
+        groupLabel.className = "group-label item-group-label";
         groupLabel.textContent = group.label;
 
         const groupStatus = document.createElement("div");
@@ -217,40 +246,64 @@ document.addEventListener("DOMContentLoaded", () => {
         sectionEl.appendChild(groupEl);
       });
 
-      checklistRoot.appendChild(sectionEl);
+      targetRoot.appendChild(sectionEl);
     });
 
-    // Aggiorna contatori globali
+    // Aggiorna contatori globali (structural + macro)
     updateScore();
   }
 
   // ---- SCORING ----
   function updateScore() {
-    const selects = checklistRoot.querySelectorAll(".checklist-select");
-    let totalItems = 0;
-    let totalScore = 0;
+    const allSelects = document.querySelectorAll(".checklist-select");
 
-    selects.forEach((select) => {
-      totalItems += 1;
+    let structuralItems = 0;
+    let structuralScoreSum = 0;
+    let macroItems = 0;
+    let macroScoreSum = 0;
+
+    allSelects.forEach((select) => {
       const val = select.value ? Number(select.value) : 0;
-      totalScore += val;
 
+      // Aggiorna chip
       const chip = select
         .closest(".checklist-item")
-        .querySelector("[data-score-chip], .score-chip");
+        ?.querySelector("[data-score-chip], .score-chip");
       if (chip) {
         chip.textContent = `Score: ${val}`;
       }
+
+      const isMacro = !!select.closest(".card-checklist--macro");
+      if (isMacro) {
+        macroItems += 1;
+        macroScoreSum += val;
+      } else {
+        structuralItems += 1;
+        structuralScoreSum += val;
+      }
     });
 
-    checklistCounter.textContent = `${totalItems} item${
-      totalItems !== 1 ? "s" : ""
-    }`;
-    checklistScore.textContent = `Total score: ${totalScore}`;
+    if (checklistCounter) {
+      checklistCounter.textContent = `${structuralItems} item${
+        structuralItems !== 1 ? "s" : ""
+      }`;
+    }
+    if (checklistScore) {
+      checklistScore.textContent = `Total score: ${structuralScoreSum}`;
+    }
+
+    if (checklistCounterMacro) {
+      checklistCounterMacro.textContent = `${macroItems} item${
+        macroItems !== 1 ? "s" : ""
+      }`;
+    }
+    if (checklistScoreMacro) {
+      checklistScoreMacro.textContent = `Total score: ${macroScoreSum}`;
+    }
   }
 
   function updateGroupStatusVisual(groupId) {
-    const groupEl = checklistRoot.querySelector(
+    const groupEl = document.querySelector(
       `.group-card[data-group-id="${groupId}"]`
     );
     if (!groupEl) return;
@@ -270,9 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---- EVENTI ----
-
-  // Cambio selezione su un item
-  checklistRoot.addEventListener("change", (event) => {
+  function handleSelectChange(event) {
     if (!event.target.matches(".checklist-select")) return;
 
     const select = event.target;
@@ -288,12 +339,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     persistState();
     updateScore();
-  });
+  }
 
-  // Click sui pulsanti di sezione (Reset section / Commit section)
-  checklistRoot.addEventListener("click", (event) => {
+  function handleGroupButtonClick(event) {
     const btn = event.target.closest("button[data-action]");
     if (!btn) return;
+
     const action = btn.dataset.action;
     const groupEl = btn.closest(".group-card");
     if (!groupEl) return;
@@ -321,12 +372,19 @@ document.addEventListener("DOMContentLoaded", () => {
       persistState();
       updateGroupStatusVisual(groupId);
     }
+  }
+
+  // Attacca event listener a tutti i root esistenti (structural + macro)
+  [structuralRoot, macroRoot].forEach((root) => {
+    if (!root) return;
+    root.addEventListener("change", handleSelectChange);
+    root.addEventListener("click", handleGroupButtonClick);
   });
 
   // Start checklist: scroll alla prima sezione / group
   if (startBtn) {
     startBtn.addEventListener("click", () => {
-      const firstGroup = checklistRoot.querySelector(".group-card");
+      const firstGroup = document.querySelector(".group-card");
       if (firstGroup) {
         firstGroup.scrollIntoView({ behavior: "smooth", block: "start" });
         const firstSelect = firstGroup.querySelector(".checklist-select");
@@ -347,15 +405,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       clearState();
 
-      const selects = checklistRoot.querySelectorAll(".checklist-select");
+      const selects = document.querySelectorAll(".checklist-select");
       selects.forEach((s) => {
         s.value = "";
       });
 
-      const groups = checklistRoot.querySelectorAll(".group-card");
+      const groups = document.querySelectorAll(".group-card");
       groups.forEach((g) => g.classList.remove("group-committed"));
 
-      const statuses = checklistRoot.querySelectorAll(".group-status-chip");
+      const statuses = document.querySelectorAll(".group-status-chip");
       statuses.forEach((st) => (st.textContent = "In progress"));
 
       updateScore();
@@ -365,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Commit ALL
   if (commitAllBtn) {
     commitAllBtn.addEventListener("click", () => {
-      const groups = checklistRoot.querySelectorAll(".group-card");
+      const groups = document.querySelectorAll(".group-card");
       groups.forEach((g) => {
         const groupId = g.dataset.groupId;
         if (!groupId) return;
@@ -375,9 +433,6 @@ document.addEventListener("DOMContentLoaded", () => {
       persistState();
     });
   }
-
-  // ---- INIT: carica state + JSON ----
-  loadState();
 
   // ---- GUIDELINES COLLAPSE ----
   const guidelinesCard = document.querySelector(".card-guidelines");
@@ -402,19 +457,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ---- INIT: carica state + JSON ----
+  loadState();
+
   fetch("data/clarity-checklist.json")
     .then((res) => res.json())
     .then((data) => {
       checklistData = data;
       if (!Array.isArray(checklistData.sections)) {
         console.error("Invalid checklist data. Expected sections[]");
+        const target =
+          structuralRoot || macroRoot || document.getElementById("checklistRoot");
+        if (target) {
+          target.innerHTML =
+            '<p style="font-size: 13px; color: #c00;">Invalid checklist configuration.</p>';
+        }
         return;
       }
       buildChecklist(checklistData.sections);
     })
     .catch((err) => {
       console.error("Failed to load checklist JSON:", err);
-      checklistRoot.innerHTML =
-        '<p style="font-size: 13px; color: #c00;">Unable to load checklist configuration.</p>';
+      const target =
+        structuralRoot || macroRoot || document.getElementById("checklistRoot");
+      if (target) {
+        target.innerHTML =
+          '<p style="font-size: 13px; color: #c00;">Unable to load checklist configuration.</p>';
+      }
     });
 });

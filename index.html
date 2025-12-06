@@ -22,7 +22,7 @@
           <div class="brand-subtitle">Checklist for medical AI research</div>
         </div>
       </div>
-      <div class="pill-version">CLARITY 2.0 – Web Edition</div>
+      <div class="pill-version">CLARITY – Web Edition</div>
     </header>
 
     <main class="main">
@@ -141,12 +141,16 @@
         </div>
       </section>
 
-      <!-- CHECKLIST PANEL -->
-      <section class="card card-checklist" aria-label="CLARITY AI checklist">
+            <!-- CHECKLIST – STRUCTURAL ITEMS -->
+      <section
+        class="card card-checklist card-checklist--structural"
+        aria-label="CLARITY AI – Structural items"
+      >
         <div class="checklist-header">
           <div>
-            <div class="checklist-title">Checklist</div>
+            <div class="checklist-title">Structural items</div>
             <div class="checklist-meta">
+              <!-- Manteniamo questi ID così non rompiamo il JS esistente -->
               <span id="checklistCounter">0 items</span>
               •
               <span id="checklistScore">Total score: 0</span>
@@ -162,34 +166,35 @@
           </div>
         </div>
 
-        <div id="checklistRoot" class="checklist-container">
-          <!-- Verrà popolato da app.js usando clarity-checklist.json -->
+        <div
+          id="checklistRootStructural"
+          class="checklist-container checklist-container--structural"
+        >
+          <!-- Popolato da app.js: sezione structural -->
         </div>
       </section>
 
-        <div id="checklistRoot" class="checklist-container">
-          <!-- Esempio di item (poi lo sostituiremo con il JSON) -->
-          <div class="checklist-item">
-            <div class="checklist-index">1</div>
-            <div class="checklist-content">
-              <div class="checklist-label">
-                Title clearly indicates the AI/ML component of the study.
-              </div>
-              <div class="checklist-help">
-                The title should explicitly mention that the work involves artificial
-                intelligence or machine learning in a medical context.
-              </div>
-              <div class="checklist-controls">
-                <select class="checklist-select" data-item-id="example-1">
-                  <option value="">Select…</option>
-                  <option value="0">0 – Not reported</option>
-                  <option value="1">1 – Partially reported</option>
-                  <option value="2">2 – Adequately reported</option>
-                </select>
-                <span class="score-chip" data-score-chip>Score: 0</span>
-              </div>
+      <!-- CHECKLIST – MACRO-TOPIC ITEMS -->
+      <section
+        class="card card-checklist card-checklist--macro"
+        aria-label="CLARITY AI – Macro-topic items"
+      >
+        <div class="checklist-header">
+          <div>
+            <div class="checklist-title">Macro-topic items</div>
+            <div class="checklist-meta">
+              <span id="checklistCounterMacro">0 items</span>
+              •
+              <span id="checklistScoreMacro">Total score: 0</span>
             </div>
           </div>
+        </div>
+
+        <div
+          id="checklistRootMacro"
+          class="checklist-container checklist-container--macro"
+        >
+          <!-- Popolato da app.js: sezione macro-topic -->
         </div>
       </section>
     </main>
@@ -199,7 +204,7 @@
     <div class="footer-inner">
       <div class="credits">
         <span class="label">Credits:</span>
-        <span>Research &amp; Design – Luca Stella</span>•
+        <span>Research &amp; Design – Luca Marconi - Federico Cabitza</span>•
         <span>Research &amp; Development – Efrem Pirovano</span>
       </div>
       <div class="license-pill">
