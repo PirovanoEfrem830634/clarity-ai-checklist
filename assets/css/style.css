@@ -53,15 +53,9 @@ body {
 }
 
 .main {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr);
-  gap: 20px;
-}
-
-@media (max-width: 880px) {
-  .main {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Brand */
@@ -120,9 +114,11 @@ body {
 /* Hero */
 
 .card-hero {
+  padding: 22px 22px 26px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+  align-items: center;
 }
 
 .hero-heading {
@@ -388,4 +384,265 @@ body {
   padding: 4px 10px;
   border: 1px solid var(--border-subtle);
   background: rgba(255, 255, 255, 0.9);
+}
+
+/* Sezioni e microsezioni */
+
+.checklist-section {
+  margin-bottom: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.section-max {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.group-card {
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.group-header {
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(to bottom, #f9fafb, #f5f5f7);
+}
+
+.group-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.group-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.group-status-chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #f2f2f7;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+}
+
+.group-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.group-body {
+  padding: 8px 10px 6px;
+}
+
+/* Stato committed */
+
+.group-committed .group-header {
+  border-bottom-color: rgba(52, 199, 89, 0.4);
+  background: linear-gradient(to bottom, #e9f9ef, #f5fdf8);
+}
+
+.group-committed .group-status-chip {
+  background: rgba(52, 199, 89, 0.12);
+  color: #22863a;
+}
+
+/* Bottoni piccoli / varianti */
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.btn-commit {
+  border-color: rgba(52, 199, 89, 0.4);
+}
+
+.btn-danger-soft {
+  border-color: rgba(255, 59, 48, 0.4);
+  color: #c53a32;
+}
+
+.card-guidelines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px 18px;
+}
+
+.guidelines-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.guidelines-heading {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.guidelines-kicker {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+.guidelines-subheading {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 10px 0 4px;
+  color: var(--text-main);
+}
+
+.guidelines-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+}
+
+.guidelines-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.guidelines-list li {
+  margin-bottom: 3px;
+}
+
+/* Toggle button - stato base */
+
+.guidelines-toggle {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 5px 12px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+/* Stato attivo (dettagli visibili) */
+
+.card-guidelines:not(.collapsed) .guidelines-toggle {
+  background: rgba(0, 122, 255, 0.1);
+  border-color: rgba(0, 122, 255, 0.5);
+  color: var(--accent);
+  box-shadow: 0 6px 16px rgba(0, 122, 255, 0.2);
+}
+
+.guidelines-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.guidelines-toggle:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Corpo collassabile: sempre stessa larghezza, anima solo l'altezza */
+
+.guidelines-body {
+  margin-top: 8px;
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+  transition:
+    max-height 0.25s ease,
+    opacity 0.2s ease,
+    margin-top 0.2s ease;
+}
+
+.card-guidelines.collapsed .guidelines-body {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+/* Corpo collassabile */
+
+.guidelines-body {
+  margin-top: 10px;
+}
+
+.card-guidelines.collapsed .guidelines-body {
+  display: none;
+}
+
+.card-guidelines.collapsed .guidelines-toggle-chevron {
+  transform: translateY(0) rotate(180deg);
+}
+
+.hero-main-title {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin: 6px 0 0;
+}
+
+.hero-subtitle-centered {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--text-secondary);
+  margin: 2px 0 8px;
+}
+
+.hero-intro-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 4px;
+}
+
+.hero-badges-centered {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.hero-actions-centered {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
 }

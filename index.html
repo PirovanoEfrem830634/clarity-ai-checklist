@@ -28,36 +28,116 @@
     <main class="main">
       <!-- HERO / INTRO -->
       <section class="card card-hero" aria-labelledby="hero-title">
-        <div class="pill-status">
-          <span class="pill-dot"></span>
-          Interactive checklist
+  
+      <!-- Badge -->
+      <div class="pill-status" style="margin:auto;">
+        <span class="pill-dot"></span>
+        Interactive checklist
+      </div>
+
+      <!-- Titolo principale -->
+      <h1 id="hero-title" class="hero-main-title">
+        CLARITY AI
+      </h1>
+
+      <!-- Sottotitolo -->
+      <h2 class="hero-subtitle-centered">
+        Checklist for medical AI research
+      </h2>
+
+      <!-- Testo introduttivo -->
+      <p class="hero-intro-text">
+        The CLARITY evaluation checklist is designed to provide clear and systematic guidance
+        for assessing studies that utilize Artificial Intelligence (AI) in the medical field.
+        This tool facilitates a comprehensive and objective evaluation of AI-based research,
+        ensuring that all critical aspects of study design, implementation, and reporting
+        are thoroughly examined.
+      </p>
+
+      <p class="hero-intro-text">
+        Each section of the CLARITY evaluation file addresses a specific element of the study,
+        from dataset design and data handling to results interpretation and ethical considerations.
+        Users are guided through detailed questions designed to elicit key information and
+        insights about the rigor, transparency, and clinical relevance of the study.
+      </p>
+
+      <p class="hero-intro-text">
+        To ensure a standardized and transparent assessment process, each question can be rated
+        on a scale of <strong>0 to 5 stars</strong>, with 0 stars indicating lack of adherence
+        and 5 stars representing exemplary compliance. This rating system enables a nuanced,
+        structured, and fair evaluation of AI research in medicine.
+      </p>
+
+      <!-- Badges -->
+      <div class="hero-badges-centered">
+        <span class="badge badge-strong">Focus: medical AI studies</span>
+        <span class="badge">Structural items & macro topics</span>
+        <span class="badge">Aligned with CLARITY 2.0</span>
+      </div>
+
+      <!-- Start button -->
+      <div class="hero-actions-centered">
+        <button id="startChecklist" class="btn-primary">
+          Start checklist <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+
+    </section>
+
+      <!-- GUIDELINES / CHECKLIST OVERVIEW (collapsible) -->
+      <section class="card card-guidelines" aria-labelledby="guidelines-title">
+        <div class="guidelines-header">
+          <div>
+            <h2 id="guidelines-title" class="guidelines-heading">
+              How to use this checklist
+            </h2>
+            <p class="guidelines-kicker">
+              Optional reading – you can hide this section after the first use.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="guidelines-toggle"
+            aria-expanded="true"
+          >
+            <span class="guidelines-toggle-label">Hide details</span>
+          </button>
         </div>
 
-        <h1 id="hero-title" class="hero-heading">
-          Make AI in medicine clearer,<br />
-          one checklist at a time.
-        </h1>
+        <div class="guidelines-body">
+          <p class="guidelines-text">
+            The CLARITY evaluation checklist is designed to provide clear and systematic
+            guidance for assessing studies that utilize Artificial Intelligence (AI) in the
+            medical field. This tool facilitates a comprehensive and objective evaluation
+            of AI-based research, ensuring that all critical aspects of study design,
+            implementation, and reporting are thoroughly examined.
+          </p>
 
-        <p class="hero-subtitle">
-          Use CLARITY AI to evaluate the reporting quality of AI and machine learning
-          studies in medicine. The web checklist helps reviewers, clinicians,
-          and researchers apply the original framework in a structured, consistent way.
-        </p>
+          <p class="guidelines-text">
+            Each section of the CLARITY evaluation file addresses a specific element of the
+            study, from dataset design and data handling to results interpretation and ethical
+            considerations. Users are guided through detailed questions designed to elicit
+            key information and insights about the rigor, transparency, and clinical relevance
+            of the study.
+          </p>
 
-        <div class="hero-badges">
-          <span class="badge badge-strong">Focus: medical AI studies</span>
-          <span class="badge">Structural items &amp; macro topics</span>
-          <span class="badge">Aligned with CLARITY 2.0</span>
-        </div>
+          <p class="guidelines-text">
+            To ensure a standardized and transparent assessment process, each question can be
+            rated on a scale of <strong>0 to 5 stars</strong>, with 0 stars indicating lack
+            of adherence and 5 stars representing exemplary compliance. This rating system
+            enables a nuanced, structured, and fair evaluation of AI research in medicine.
+          </p>
 
-        <div class="hero-actions">
-          <button id="startChecklist" class="btn-primary">
-            Start checklist
-            <span aria-hidden="true">↗</span>
-          </button>
-          <button id="resetChecklist" class="btn-secondary">
-            Reset all scores
-          </button>
+          <h3 class="guidelines-subheading">Star rating scale</h3>
+
+          <ul class="guidelines-list">
+            <li><strong>0 stars</strong> — The study doesn’t meet the criteria or lacks crucial information.</li>
+            <li><strong>1 star</strong> — The study minimally meets the criteria or lacks crucial information.</li>
+            <li><strong>2 stars</strong> — The study meets some of the criteria but has significant weaknesses.</li>
+            <li><strong>3 stars</strong> — The study adequately meets the criteria with minor issues.</li>
+            <li><strong>4 stars</strong> — The study meets the criteria well with only minor improvements needed.</li>
+            <li><strong>5 stars</strong> — The study fully meets the criteria and represents best practice.</li>
+          </ul>
         </div>
       </section>
 
@@ -65,14 +145,27 @@
       <section class="card card-checklist" aria-label="CLARITY AI checklist">
         <div class="checklist-header">
           <div>
-            <div class="checklist-title">Checklist preview</div>
+            <div class="checklist-title">Checklist</div>
             <div class="checklist-meta">
               <span id="checklistCounter">0 items</span>
               •
               <span id="checklistScore">Total score: 0</span>
             </div>
           </div>
+          <div class="checklist-actions-global">
+            <button id="commitAll" class="btn-secondary btn-small">
+              Commit all
+            </button>
+            <button id="resetChecklist" class="btn-secondary btn-small btn-danger-soft">
+              Reset all
+            </button>
+          </div>
         </div>
+
+        <div id="checklistRoot" class="checklist-container">
+          <!-- Verrà popolato da app.js usando clarity-checklist.json -->
+        </div>
+      </section>
 
         <div id="checklistRoot" class="checklist-container">
           <!-- Esempio di item (poi lo sostituiremo con il JSON) -->

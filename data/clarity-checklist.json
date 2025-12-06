@@ -1,0 +1,65 @@
+{
+  "sections": [
+    {
+      "id": "S",
+      "label": "Structural items",
+      "maxScore": 190,
+      "groups": [
+        {
+          "code": "TI",
+          "label": "Title",
+          "items": [
+            {
+              "id": "STI01",
+              "label": "Identification and Scope",
+              "description": "The title clearly identifies the study as involving AI/ML and indicates the main clinical or methodological scope.",
+              "scale": [0, 1, 2, 3, 4, 5],
+              "maxScore": 5
+            },
+            {
+              "id": "STI02",
+              "label": "Study Type and Objectives",
+              "description": "The title reflects the type of study (e.g. development, validation, comparison, implementation) and/or the main objective.",
+              "scale": [0, 1, 2, 3, 4, 5],
+              "maxScore": 5
+            },
+            {
+              "id": "STI03",
+              "label": "Evaluation Metrics",
+              "description": "When appropriate, the title anticipates the evaluation focus (e.g. performance comparison, robustness, generalisability).",
+              "scale": [0, 1, 2, 3, 4, 5],
+              "maxScore": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M",
+      "label": "Macro-topic items",
+      "maxScore": 215,
+      "groups": [
+        {
+          "code": "DA",
+          "label": "Data and Population",
+          "items": [
+            {
+              "id": "MDA01",
+              "label": "Clinical Data Description",
+              "description": "The study provides a clear description of the clinical data, population, and data sources used for AI/ML development.",
+              "scale": [0, 1, 2, 3, 4, 5],
+              "maxScore": 5
+            },
+            {
+              "id": "MDA02",
+              "label": "Dataset Structure and Splits",
+              "description": "The dataset structure (training/validation/test or cross-validation) and splitting strategy are explicitly reported.",
+              "scale": [0, 1, 2, 3, 4, 5],
+              "maxScore": 5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
