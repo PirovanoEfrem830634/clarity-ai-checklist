@@ -1,4 +1,5 @@
 :root {
+  /* Tema generale */
   --bg: #f5f5f7;
   --card-bg: #ffffff;
   --accent: #007aff;
@@ -10,6 +11,16 @@
   --radius-xl: 24px;
   --radius-pill: 999px;
   --transition-fast: 0.18s ease-out;
+
+  /* Palette Apple-like per i gruppi */
+  --clarity-red:    #ff3b30;
+  --clarity-orange: #ff9500;
+  --clarity-yellow: #ffcc00;
+  --clarity-green:  #34c759;
+  --clarity-teal:   #5ac8fa;
+  --clarity-blue:   #007aff;
+  --clarity-indigo: #5856d6;
+  --clarity-purple: #af52de;
 }
 
 * {
@@ -215,6 +226,20 @@ body {
   box-shadow: none;
 }
 
+.btn-small {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.btn-commit {
+  border-color: rgba(52, 199, 89, 0.4);
+}
+
+.btn-danger-soft {
+  border-color: rgba(255, 59, 48, 0.4);
+  color: #c53a32;
+}
+
 /* Pill status */
 
 .pill-status {
@@ -409,27 +434,24 @@ body {
   color: var(--text-secondary);
 }
 
-.group-card {
-  border-radius: 16px;
-  border: 1px solid var(--border-subtle);
-  background: #ffffff;
-  margin-bottom: 10px;
-  overflow: hidden;
-}
+/* Group header + actions */
 
 .group-header {
-  padding: 10px 12px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border-subtle);
-  background: linear-gradient(to bottom, #f9fafb, #f5f5f7);
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
 .group-header-left {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+}
+
+.group-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .group-label {
@@ -437,52 +459,132 @@ body {
   font-weight: 500;
 }
 
+/* Stato gruppo (pill destra) */
+
 .group-status-chip {
-  font-size: 11px;
-  padding: 3px 8px;
+  padding: 4px 12px;
   border-radius: 999px;
-  background: #f2f2f7;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: rgba(0, 0, 0, 0.06);
+  color: #4b5563;
 }
 
-.group-actions {
-  display: flex;
-  gap: 6px;
+.group-card.group-committed .group-status-chip {
+  background: rgba(52, 199, 89, 0.14);
+  color: #1d6f33;
 }
 
 .group-body {
   padding: 8px 10px 6px;
 }
 
-/* Stato committed */
+/* Group card – stile Apple (item-group fa il grosso del lavoro) */
 
-.group-committed .group-header {
-  border-bottom-color: rgba(52, 199, 89, 0.4);
-  background: linear-gradient(to bottom, #e9f9ef, #f5fdf8);
+.item-group {
+  --group-accent: rgba(0, 0, 0, 0.08);
+
+  position: relative;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  border-radius: 22px;
+
+  background: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--group-accent) 55%, #ffffff);
+
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+
+  backdrop-filter: blur(18px);
 }
 
-.group-committed .group-status-chip {
-  background: rgba(52, 199, 89, 0.12);
-  color: #22863a;
+/* Bordino sinistro colorato */
+
+.item-group::before {
+  content: "";
+  position: absolute;
+  inset-block: 14px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--group-accent);
 }
 
-/* Bottoni piccoli / varianti */
+/* Velo di colore molto leggero */
 
-.btn-small {
-  padding: 5px 10px;
-  font-size: 11px;
+.item-group::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--group-accent) 12%, transparent),
+    transparent 55%
+  );
+  opacity: 0.9;
 }
 
-.btn-commit {
-  border-color: rgba(52, 199, 89, 0.4);
+.item-group > * {
+  position: relative;
+  z-index: 1;
 }
 
-.btn-danger-soft {
-  border-color: rgba(255, 59, 48, 0.4);
-  color: #c53a32;
+/* Label del gruppo */
+
+.item-group-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--group-accent);
+  background: color-mix(in srgb, var(--group-accent) 10%, #ffffff);
 }
+
+/* COLORI SPECIFICI (arcobaleno) */
+
+.item-group--title {
+  --group-accent: var(--clarity-red);
+}
+
+.item-group--abstract {
+  --group-accent: var(--clarity-orange);
+}
+
+.item-group--introduction {
+  --group-accent: var(--clarity-yellow);
+}
+
+.item-group--methods {
+  --group-accent: var(--clarity-green);
+}
+
+.item-group--results {
+  --group-accent: var(--clarity-teal);
+}
+
+.item-group--discussion {
+  --group-accent: var(--clarity-blue);
+}
+
+.item-group--conclusions {
+  --group-accent: var(--clarity-indigo);
+}
+
+.item-group--ethics,
+.item-group--limitations,
+.item-group--future {
+  --group-accent: var(--clarity-purple);
+}
+
+/* Guidelines card */
 
 .card-guidelines {
   display: flex;
@@ -537,7 +639,7 @@ body {
   margin-bottom: 3px;
 }
 
-/* Toggle button - stato base */
+/* Toggle guidelines */
 
 .guidelines-toggle {
   border-radius: var(--radius-pill);
@@ -557,8 +659,6 @@ body {
     color var(--transition-fast);
 }
 
-/* Stato attivo (dettagli visibili) */
-
 .card-guidelines:not(.collapsed) .guidelines-toggle {
   background: rgba(0, 122, 255, 0.1);
   border-color: rgba(0, 122, 255, 0.5);
@@ -575,7 +675,7 @@ body {
   box-shadow: none;
 }
 
-/* Corpo collassabile: sempre stessa larghezza, anima solo l'altezza */
+/* Corpo collassabile */
 
 .guidelines-body {
   margin-top: 8px;
@@ -594,19 +694,7 @@ body {
   margin-top: 0;
 }
 
-/* Corpo collassabile */
-
-.guidelines-body {
-  margin-top: 10px;
-}
-
-.card-guidelines.collapsed .guidelines-body {
-  display: none;
-}
-
-.card-guidelines.collapsed .guidelines-toggle-chevron {
-  transform: translateY(0) rotate(180deg);
-}
+/* Hero centrato */
 
 .hero-main-title {
   font-size: 24px;
@@ -645,191 +733,4 @@ body {
   display: flex;
   justify-content: center;
   margin-top: 14px;
-}
-
-/* Palette Apple-like (pastello, iOS style) */
-:root {
-  --clarity-red:    #ff3b30;
-  --clarity-orange: #ff9500;
-  --clarity-yellow: #ffcc00;
-  --clarity-green:  #34c759;
-  --clarity-teal:   #5ac8fa;
-  --clarity-blue:   #007aff;
-  --clarity-indigo: #5856d6;
-  --clarity-purple: #af52de;
-}
-
-/* Base per tutti i gruppi */
-.item-group {
-  border-radius: 18px;
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-}
-
-/* Bordo sinistro colorato stile Apple Health */
-.item-group::before {
-  content: "";
-  position: absolute;
-  inset-block: 10px;
-  inset-inline-start: 0;
-  width: 4px;
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.08),
-    rgba(0, 0, 0, 0.02)
-  );
-}
-
-/* Label del gruppo (es. TITLE, ABSTRACT...) */
-.item-group-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-
-/* ---- Arcobaleno per i singoli group ---- */
-
-/* TITLE → rosso Apple */
-.item-group--title {
-  background: linear-gradient(
-      135deg,
-      rgba(255, 59, 48, 0.14),
-      rgba(255, 59, 48, 0.02)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--title::before {
-  background: var(--clarity-red);
-}
-.item-group--title .item-group-label {
-  color: var(--clarity-red);
-}
-
-/* ABSTRACT → arancione */
-.item-group--abstract {
-  background: linear-gradient(
-      135deg,
-      rgba(255, 149, 0, 0.14),
-      rgba(255, 149, 0, 0.02)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--abstract::before {
-  background: var(--clarity-orange);
-}
-.item-group--abstract .item-group-label {
-  color: var(--clarity-orange);
-}
-
-/* INTRODUCTION → giallo */
-.item-group--introduction {
-  background: linear-gradient(
-      135deg,
-      rgba(255, 204, 0, 0.18),
-      rgba(255, 204, 0, 0.04)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--introduction::before {
-  background: var(--clarity-yellow);
-}
-.item-group--introduction .item-group-label {
-  color: var(--clarity-yellow);
-}
-
-/* METHODS → verde */
-.item-group--methods {
-  background: linear-gradient(
-      135deg,
-      rgba(52, 199, 89, 0.16),
-      rgba(52, 199, 89, 0.04)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--methods::before {
-  background: var(--clarity-green);
-}
-.item-group--methods .item-group-label {
-  color: var(--clarity-green);
-}
-
-/* RESULTS → teal */
-.item-group--results {
-  background: linear-gradient(
-      135deg,
-      rgba(90, 200, 250, 0.18),
-      rgba(90, 200, 250, 0.04)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--results::before {
-  background: var(--clarity-teal);
-}
-.item-group--results .item-group-label {
-  color: var(--clarity-teal);
-}
-
-/* DISCUSSION → blu */
-.item-group--discussion {
-  background: linear-gradient(
-      135deg,
-      rgba(0, 122, 255, 0.18),
-      rgba(0, 122, 255, 0.05)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--discussion::before {
-  background: var(--clarity-blue);
-}
-.item-group--discussion .item-group-label {
-  color: var(--clarity-blue);
-}
-
-/* CONCLUSIONS → indigo */
-.item-group--conclusions {
-  background: linear-gradient(
-      135deg,
-      rgba(88, 86, 214, 0.18),
-      rgba(88, 86, 214, 0.05)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--conclusions::before {
-  background: var(--clarity-indigo);
-}
-.item-group--conclusions .item-group-label {
-  color: var(--clarity-indigo);
-}
-
-/* ETHICS / LIMITATIONS / FUTURE WORK → viola */
-.item-group--ethics,
-.item-group--limitations,
-.item-group--future {
-  background: linear-gradient(
-      135deg,
-      rgba(175, 82, 222, 0.2),
-      rgba(175, 82, 222, 0.06)
-    ),
-    rgba(255, 255, 255, 0.9);
-}
-.item-group--ethics::before,
-.item-group--limitations::before,
-.item-group--future::before {
-  background: var(--clarity-purple);
-}
-.item-group--ethics .item-group-label,
-.item-group--limitations .item-group-label,
-.item-group--future .item-group-label {
-  color: var(--clarity-purple);
 }

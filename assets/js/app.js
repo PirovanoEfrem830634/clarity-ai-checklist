@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetAllBtn = document.getElementById("resetChecklist");
   const commitAllBtn = document.getElementById("commitAll");
 
-  // Supporto retrocompatibilità: se non esistono i nuovi root, usa quello vecchio
+  // Nuovi root per Structural / Macro
   const legacyRoot = document.getElementById("checklistRoot");
   const structuralRoot =
     document.getElementById("checklistRootStructural") || legacyRoot;
@@ -32,6 +32,104 @@ document.addEventListener("DOMContentLoaded", () => {
     scores: {}, // { [itemId]: number }
     committedGroups: {}, // { [groupId]: true }
   };
+
+  // ---- MAPPING COLORI (arcobaleno Apple) ----
+  // Qui mappiamo i codici delle micro-sezioni (TI, AB, IN, ME, RE, DI, CO, ETH, LIM, FUT...)
+  // alle chiavi usate nel CSS: title, abstract, introduction, methods, results, discussion, conclusions, ethics, limitations, future
+  const COLOR_MAP = {
+    // TITLE
+    ti: "title",
+    title: "title",
+
+    // ABSTRACT
+    ab: "abstract",
+    abs: "abstract",
+    abstract: "abstract",
+
+    // INTRODUCTION / BACKGROUND
+    in: "introduction",
+    intro: "introduction",
+    introduction: "introduction",
+    background: "introduction",
+
+    // METHODS
+    me: "methods",
+    meth: "methods",
+    methods: "methods",
+    methodology: "methods",
+
+    // RESULTS
+    re: "results",
+    res: "results",
+    results: "results",
+    findings: "results",
+
+    // DISCUSSION
+    di: "discussion",
+    disc: "discussion",
+    discussion: "discussion",
+
+    // CONCLUSIONS
+    co: "conclusions",
+    conc: "conclusions",
+    conclusions: "conclusions",
+
+    // ETHICS
+    et: "ethics",
+    eth: "ethics",
+    ethics: "ethics",
+
+    // LIMITATIONS
+    li: "limitations",
+    lim: "limitations",
+    limitations: "limitations",
+
+    // FUTURE / OUTLOOK
+    fu: "future",
+    fut: "future",
+    future: "future",
+    "future-work": "future",
+    perspectives: "future",
+  };
+
+  function getColorKey(group) {
+    // Proviamo prima con il code (es. TI, AB...),
+    // poi con l'id, poi con il label.
+    const candidates = [];
+
+    if (group.code) candidates.push(group.code);
+    if (group.id) candidates.push(group.id);
+    if (group.label) candidates.push(group.label);
+
+    for (const raw of candidates) {
+      if (!raw) continue;
+      const key = raw.toString().toLowerCase().trim();
+
+      // Se è proprio una chiave esatta nel COLOR_MAP
+      if (COLOR_MAP[key]) return COLOR_MAP[key];
+
+      // Proviamo anche versioni "ripulite"
+      const cleaned = key.replace(/\s+/g, "-"); // es. "Study title" -> "study-title"
+      if (COLOR_MAP[cleaned]) return COLOR_MAP[cleaned];
+
+      // Se il codice è tipo "STI", prendiamo solo le ultime 2 lettere ("ti")
+      if (key.length === 3) {
+        const lastTwo = key.slice(1); // es. "sti" -> "ti"
+        if (COLOR_MAP[lastTwo]) return COLOR_MAP[lastTwo];
+      }
+
+      // Se è tipo "STI-Title", prendiamo la parte dopo il trattino
+      const parts = key.split(/[-_]/);
+      if (parts.length > 1) {
+        for (const p of parts) {
+          if (COLOR_MAP[p]) return COLOR_MAP[p];
+        }
+      }
+    }
+
+    // Nessun match: niente colore speciale, rimane stile base bianco.
+    return null;
+  }
 
   // ---- STATE HELPERS ----
   function loadState() {
@@ -78,8 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (macroRoot) macroRoot.innerHTML = "";
 
     sections.forEach((section) => {
-      // Decidiamo dove appendere la sezione:
-      // se section.id inizia per "M" => Macro, altrimenti Structural
+      // Sezione macro se l'id inizia per "M"
       const isMacroSection =
         typeof section.id === "string" &&
         section.id.trim().toUpperCase().startsWith("M");
@@ -111,16 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const groupId = `${section.id}-${group.code}`; // es. "S-TI"
 
         const groupEl = document.createElement("div");
-        // Apple-style group + compat con stile precedente
+        // group-card + item-group per Apple-style
         groupEl.className = "group-card item-group";
         groupEl.dataset.groupId = groupId;
 
-        // Classe per colore arcobaleno basata su group.code o group.id/label
-        const colorKey =
-          (group.code || group.id || group.label || "")
-            .toString()
-            .toLowerCase()
-            .replace(/\s+/g, "-");
+        // Mappiamo il colore
+        const colorKey = getColorKey(group);
         if (colorKey) {
           groupEl.classList.add(`item-group--${colorKey}`);
         }
@@ -187,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const labelEl = document.createElement("div");
           labelEl.className = "checklist-label";
-          // Mostriamo l'ID come prefisso, es. "STI01 – Identification and Scope"
           labelEl.textContent = `${item.id} – ${item.label}`;
 
           const descEl = document.createElement("div");
@@ -217,7 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
             selectEl.appendChild(opt);
           });
 
-          // Se abbiamo uno score salvato in state, impostiamo il valore
           const savedValue = checklistState.scores[item.id];
           if (savedValue !== undefined && savedValue !== null) {
             selectEl.value = String(savedValue);
@@ -249,7 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
       targetRoot.appendChild(sectionEl);
     });
 
-    // Aggiorna contatori globali (structural + macro)
     updateScore();
   }
 
@@ -265,7 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
     allSelects.forEach((select) => {
       const val = select.value ? Number(select.value) : 0;
 
-      // Aggiorna chip
       const chip = select
         .closest(".checklist-item")
         ?.querySelector("[data-score-chip], .score-chip");
@@ -351,7 +440,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupId = groupEl.dataset.groupId;
 
     if (action === "reset-group") {
-      // Reset solo la microsezione corrente
       const selects = groupEl.querySelectorAll(".checklist-select");
       selects.forEach((s) => {
         const itemId = s.dataset.itemId;
@@ -367,21 +455,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (action === "commit-group") {
-      // Commit solo microsezione corrente
       checklistState.committedGroups[groupId] = true;
       persistState();
       updateGroupStatusVisual(groupId);
     }
   }
 
-  // Attacca event listener a tutti i root esistenti (structural + macro)
   [structuralRoot, macroRoot].forEach((root) => {
     if (!root) return;
     root.addEventListener("change", handleSelectChange);
     root.addEventListener("click", handleGroupButtonClick);
   });
 
-  // Start checklist: scroll alla prima sezione / group
+  // Start checklist
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       const firstGroup = document.querySelector(".group-card");
@@ -440,7 +526,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const guidelinesLabel = document.querySelector(".guidelines-toggle-label");
 
   if (guidelinesCard && guidelinesToggle && guidelinesLabel) {
-    // stato iniziale: aperto
     guidelinesCard.classList.remove("collapsed");
     guidelinesToggle.setAttribute("aria-expanded", "true");
     guidelinesLabel.textContent = "Hide details";
@@ -457,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ---- INIT: carica state + JSON ----
+  // ---- INIT ----
   loadState();
 
   fetch("data/clarity-checklist.json")
