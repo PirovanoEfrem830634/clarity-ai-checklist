@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startChecklist");
   const resetAllBtn = document.getElementById("resetChecklist");
   const commitAllBtn = document.getElementById("commitAll");
+  const resetAllMacroBtn = document.getElementById("resetChecklistMacro");
+  const commitAllMacroBtn = document.getElementById("commitAllMacro");
 
   // Root per Structural / Macro
   const legacyRoot = document.getElementById("checklistRoot");
@@ -38,62 +40,98 @@ document.addEventListener("DOMContentLoaded", () => {
     committedGroups: {}, // { [groupId]: true }
   };
 
-  // ---- MAPPING COLORI (arcobaleno Apple) ----
+      // ---- MAPPING COLORI (arcobaleno Apple) ----
   const COLOR_MAP = {
-    // TITLE
+    /* =========================
+       STRUCTURAL ITEMS (S)
+       ========================= */
+
+    // TITLE – rosso
     ti: "title",
     title: "title",
+    "title": "title",
 
-    // ABSTRACT
+    // ABSTRACT – arancio
     ab: "abstract",
-    abs: "abstract",
     abstract: "abstract",
 
-    // INTRODUCTION / BACKGROUND
+    // INTRODUCTION – giallo
     in: "introduction",
-    intro: "introduction",
     introduction: "introduction",
-    background: "introduction",
 
-    // METHODS
+    // METHODS – verde
     me: "methods",
-    meth: "methods",
     methods: "methods",
-    methodology: "methods",
 
-    // RESULTS
+    // RESULTS – teal
     re: "results",
-    res: "results",
     results: "results",
-    findings: "results",
 
-    // DISCUSSION
+    // DISCUSSION – blu
     di: "discussion",
-    disc: "discussion",
     discussion: "discussion",
 
-    // CONCLUSIONS
+    // CONCLUSIONS – indigo
     co: "conclusions",
-    conc: "conclusions",
     conclusions: "conclusions",
 
-    // ETHICS
-    et: "ethics",
-    eth: "ethics",
-    ethics: "ethics",
+    // OTHER ELEMENTS – etica / purple
+    oe: "ethics",
+    "other elements": "ethics",
 
-    // LIMITATIONS
-    li: "limitations",
-    lim: "limitations",
-    limitations: "limitations",
+    /* =========================
+       MACRO-TOPIC ITEMS (M)
+       ========================= */
 
-    // FUTURE / OUTLOOK
-    fu: "future",
-    fut: "future",
-    future: "future",
-    "future-work": "future",
-    perspectives: "future",
+    // Study Identification → come TITLE (rosso)
+    si: "title",
+    "study identification": "title",
+
+    // Structured Summary → come ABSTRACT (arancio)
+    ss: "abstract",
+    "structured summary": "abstract",
+
+    // Background & Objectives → INTRODUCTION (giallo)
+    bo: "introduction",
+    "background & objectives": "introduction",
+
+    // Study Design and Methods → METHODS (verde)
+    sd: "methods",
+    "study design and methods": "methods",
+
+    // Data Handling → METHODS (verde, parte operativa)
+    dh: "methods",
+    "data handling": "methods",
+
+    // Model Details → METHODS (verde, modello)
+    md: "methods",
+    "model details": "methods",
+
+    // Performance Metrics → RESULTS (teal)
+    pm: "results",
+    "performance metrics": "results",
+
+    // Results and Findings → RESULTS (teal)
+    rf: "results",
+    "results and findings": "results",
+
+    // Discussion and Implications → DISCUSSION (blu)
+    di2: "discussion",
+    "discussion and implications": "discussion",
+
+    // Ethics and Governance → ETHICS (viola)
+    eg: "ethics",
+    "ethics and governance": "ethics",
+
+    // Human Factors and Usability → LIMITATIONS/USABILITY (viola/secondario)
+    hf: "limitations",
+    "human factors and usability": "limitations",
+
+    // Transparency and Reproducibility → FUTURE (prospettive / viola)
+    tr: "future",
+    "transparency and reproducibility": "future",
   };
+
 
   function getColorKey(group) {
     const candidates = [];
@@ -536,6 +574,40 @@ document.addEventListener("DOMContentLoaded", () => {
       persistState();
     });
   }
+
+  if (resetAllMacroBtn) {
+  resetAllMacroBtn.addEventListener("click", () => {
+    if (!confirm("Reset all MACRO sections?")) return;
+
+    const macroGroups = document.querySelectorAll(".card-checklist--macro .group-card");
+
+    macroGroups.forEach((group) => {
+      const selects = group.querySelectorAll(".checklist-select");
+      selects.forEach((s) => {
+        delete checklistState.scores[s.dataset.itemId];
+        s.value = "";
+      });
+      delete checklistState.committedGroups[group.dataset.groupId];
+      updateGroupStatusVisual(group.dataset.groupId);
+    });
+
+    persistState();
+    updateScore();
+  });
+}
+
+if (commitAllMacroBtn) {
+  commitAllMacroBtn.addEventListener("click", () => {
+    const macroGroups = document.querySelectorAll(".card-checklist--macro .group-card");
+
+    macroGroups.forEach((g) => {
+      checklistState.committedGroups[g.dataset.groupId] = true;
+      updateGroupStatusVisual(g.dataset.groupId);
+    });
+
+    persistState();
+  });
+}
 
   // ---- GUIDELINES COLLAPSE ----
   const guidelinesCard = document.querySelector(".card-guidelines");
