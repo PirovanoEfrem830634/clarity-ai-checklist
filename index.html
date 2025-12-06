@@ -28,61 +28,59 @@
     <main class="main">
       <!-- HERO / INTRO -->
       <section class="card card-hero" aria-labelledby="hero-title">
-  
-      <!-- Badge -->
-      <div class="pill-status" style="margin:auto;">
-        <span class="pill-dot"></span>
-        Interactive checklist
-      </div>
+        <!-- Badge -->
+        <div class="pill-status" style="margin:auto;">
+          <span class="pill-dot"></span>
+          Interactive checklist
+        </div>
 
-      <!-- Titolo principale -->
-      <h1 id="hero-title" class="hero-main-title">
-        CLARITY AI
-      </h1>
+        <!-- Titolo principale -->
+        <h1 id="hero-title" class="hero-main-title">
+          CLARITY AI
+        </h1>
 
-      <!-- Sottotitolo -->
-      <h2 class="hero-subtitle-centered">
-        Checklist for medical AI research
-      </h2>
+        <!-- Sottotitolo -->
+        <h2 class="hero-subtitle-centered">
+          Checklist for medical AI research
+        </h2>
 
-      <!-- Testo introduttivo -->
-      <p class="hero-intro-text">
-        The CLARITY evaluation checklist is designed to provide clear and systematic guidance
-        for assessing studies that utilize Artificial Intelligence (AI) in the medical field.
-        This tool facilitates a comprehensive and objective evaluation of AI-based research,
-        ensuring that all critical aspects of study design, implementation, and reporting
-        are thoroughly examined.
-      </p>
+        <!-- Testo introduttivo -->
+        <p class="hero-intro-text">
+          The CLARITY evaluation checklist is designed to provide clear and systematic guidance
+          for assessing studies that utilize Artificial Intelligence (AI) in the medical field.
+          This tool facilitates a comprehensive and objective evaluation of AI-based research,
+          ensuring that all critical aspects of study design, implementation, and reporting
+          are thoroughly examined.
+        </p>
 
-      <p class="hero-intro-text">
-        Each section of the CLARITY evaluation file addresses a specific element of the study,
-        from dataset design and data handling to results interpretation and ethical considerations.
-        Users are guided through detailed questions designed to elicit key information and
-        insights about the rigor, transparency, and clinical relevance of the study.
-      </p>
+        <p class="hero-intro-text">
+          Each section of the CLARITY evaluation file addresses a specific element of the study,
+          from dataset design and data handling to results interpretation and ethical considerations.
+          Users are guided through detailed questions designed to elicit key information and
+          insights about the rigor, transparency, and clinical relevance of the study.
+        </p>
 
-      <p class="hero-intro-text">
-        To ensure a standardized and transparent assessment process, each question can be rated
-        on a scale of <strong>0 to 5 stars</strong>, with 0 stars indicating lack of adherence
-        and 5 stars representing exemplary compliance. This rating system enables a nuanced,
-        structured, and fair evaluation of AI research in medicine.
-      </p>
+        <p class="hero-intro-text">
+          To ensure a standardized and transparent assessment process, each question can be rated
+          on a scale of <strong>0 to 5 stars</strong>, with 0 stars indicating lack of adherence
+          and 5 stars representing exemplary compliance. This rating system enables a nuanced,
+          structured, and fair evaluation of AI research in medicine.
+        </p>
 
-      <!-- Badges -->
-      <div class="hero-badges-centered">
-        <span class="badge badge-strong">Focus: medical AI studies</span>
-        <span class="badge">Structural items & macro topics</span>
-        <span class="badge">Aligned with CLARITY 2.0</span>
-      </div>
+        <!-- Badges -->
+        <div class="hero-badges-centered">
+          <span class="badge badge-strong">Focus: medical AI studies</span>
+          <span class="badge">Structural items &amp; macro topics</span>
+          <span class="badge">Aligned with CLARITY 2.0</span>
+        </div>
 
-      <!-- Start button -->
-      <div class="hero-actions-centered">
-        <button id="startChecklist" class="btn-primary">
-          Start checklist <span aria-hidden="true">↗</span>
-        </button>
-      </div>
-
-    </section>
+        <!-- Start button -->
+        <div class="hero-actions-centered">
+          <button id="startChecklist" class="btn-primary">
+            Start checklist <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </section>
 
       <!-- GUIDELINES / CHECKLIST OVERVIEW (collapsible) -->
       <section class="card card-guidelines" aria-labelledby="guidelines-title">
@@ -141,7 +139,7 @@
         </div>
       </section>
 
-            <!-- CHECKLIST – STRUCTURAL ITEMS -->
+      <!-- CHECKLIST – STRUCTURAL ITEMS -->
       <section
         class="card card-checklist card-checklist--structural"
         aria-label="CLARITY AI – Structural items"
@@ -150,10 +148,10 @@
           <div>
             <div class="checklist-title">Structural items</div>
             <div class="checklist-meta">
-              <!-- Manteniamo questi ID così non rompiamo il JS esistente -->
               <span id="checklistCounter">0 items</span>
               •
               <span id="checklistScore">Total score: 0</span>
+              <span id="checklistMax" class="checklist-max"> / Max: 0</span>
             </div>
           </div>
           <div class="checklist-actions-global">
@@ -186,8 +184,10 @@
               <span id="checklistCounterMacro">0 items</span>
               •
               <span id="checklistScoreMacro">Total score: 0</span>
+              <span id="checklistMaxMacro" class="checklist-max"> / Max: 0</span>
             </div>
           </div>
+          <!-- niente pulsanti globali qui per ora -->
         </div>
 
         <div

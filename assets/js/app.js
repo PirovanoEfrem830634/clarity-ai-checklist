@@ -7,16 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetAllBtn = document.getElementById("resetChecklist");
   const commitAllBtn = document.getElementById("commitAll");
 
-  // Nuovi root per Structural / Macro
+  // Root per Structural / Macro
   const legacyRoot = document.getElementById("checklistRoot");
   const structuralRoot =
     document.getElementById("checklistRootStructural") || legacyRoot;
   const macroRoot = document.getElementById("checklistRootMacro") || null;
 
+  // Header STRUCTURAL
   const checklistCounter = document.getElementById("checklistCounter");
   const checklistScore = document.getElementById("checklistScore");
+  const checklistMax = document.getElementById("checklistMax");
+
+  // Header MACRO
   const checklistCounterMacro = document.getElementById("checklistCounterMacro");
   const checklistScoreMacro = document.getElementById("checklistScoreMacro");
+  const checklistMaxMacro = document.getElementById("checklistMaxMacro");
 
   const SCALE_LABELS = {
     0: "0 ★ - Does not meet the criteria",
@@ -34,8 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---- MAPPING COLORI (arcobaleno Apple) ----
-  // Qui mappiamo i codici delle micro-sezioni (TI, AB, IN, ME, RE, DI, CO, ETH, LIM, FUT...)
-  // alle chiavi usate nel CSS: title, abstract, introduction, methods, results, discussion, conclusions, ethics, limitations, future
   const COLOR_MAP = {
     // TITLE
     ti: "title",
@@ -93,8 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function getColorKey(group) {
-    // Proviamo prima con il code (es. TI, AB...),
-    // poi con l'id, poi con il label.
     const candidates = [];
 
     if (group.code) candidates.push(group.code);
@@ -105,20 +106,18 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!raw) continue;
       const key = raw.toString().toLowerCase().trim();
 
-      // Se è proprio una chiave esatta nel COLOR_MAP
       if (COLOR_MAP[key]) return COLOR_MAP[key];
 
-      // Proviamo anche versioni "ripulite"
-      const cleaned = key.replace(/\s+/g, "-"); // es. "Study title" -> "study-title"
+      const cleaned = key.replace(/\s+/g, "-");
       if (COLOR_MAP[cleaned]) return COLOR_MAP[cleaned];
 
-      // Se il codice è tipo "STI", prendiamo solo le ultime 2 lettere ("ti")
+      // es. "sti" -> "ti"
       if (key.length === 3) {
-        const lastTwo = key.slice(1); // es. "sti" -> "ti"
+        const lastTwo = key.slice(1);
         if (COLOR_MAP[lastTwo]) return COLOR_MAP[lastTwo];
       }
 
-      // Se è tipo "STI-Title", prendiamo la parte dopo il trattino
+      // es. "sti-title" -> "sti", "title"
       const parts = key.split(/[-_]/);
       if (parts.length > 1) {
         for (const p of parts) {
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Nessun match: niente colore speciale, rimane stile base bianco.
     return null;
   }
 
@@ -175,6 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (structuralRoot) structuralRoot.innerHTML = "";
     if (macroRoot) macroRoot.innerHTML = "";
 
+    let structuralMaxTotal = 0;
+    let macroMaxTotal = 0;
+
     sections.forEach((section) => {
       // Sezione macro se l'id inizia per "M"
       const isMacroSection =
@@ -184,10 +185,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetRoot = isMacroSection ? macroRoot : structuralRoot;
       if (!targetRoot) return;
 
+      const sectionMaxScore = Number(section.maxScore || 0);
+      if (isMacroSection) {
+        macroMaxTotal += sectionMaxScore;
+      } else {
+        structuralMaxTotal += sectionMaxScore;
+      }
+
       const sectionEl = document.createElement("div");
       sectionEl.className = "checklist-section";
       sectionEl.dataset.sectionId = section.id;
 
+      // Header interno (al momento nascosto via CSS, ma lo lasciamo per semantica)
       const sectionHeader = document.createElement("div");
       sectionHeader.className = "section-header";
 
@@ -339,6 +348,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       targetRoot.appendChild(sectionEl);
     });
+
+    // Aggiorniamo i Max negli header principali
+    if (checklistMax) {
+      checklistMax.textContent = ` / Max: ${structuralMaxTotal}`;
+    }
+    if (checklistMaxMacro) {
+      checklistMaxMacro.textContent = ` / Max: ${macroMaxTotal}`;
+    }
 
     updateScore();
   }

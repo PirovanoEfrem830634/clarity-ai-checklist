@@ -291,12 +291,14 @@ body {
 
 .checklist-container {
   margin-top: 4px;
-  border-radius: 18px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(249, 249, 250, 0.95);
-  padding: 10px 10px 6px;
+  padding: 4px 0 0;
   max-height: 380px;
   overflow: auto;
+
+  /* niente card interna */
+  border-radius: 0;
+  border: none;
+  background: transparent;
 }
 
 .checklist-item {
@@ -417,11 +419,9 @@ body {
   margin-bottom: 16px;
 }
 
+/* Nasconde la header interna della sezione (label+Max score) */
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 8px;
+  display: none;
 }
 
 .section-title {
