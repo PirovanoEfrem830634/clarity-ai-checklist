@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const commitAllBtn = document.getElementById("commitAll");
   const resetAllMacroBtn = document.getElementById("resetChecklistMacro");
   const commitAllMacroBtn = document.getElementById("commitAllMacro");
+  const exportCsvBtn = document.getElementById("exportCsv");
+  const exportPdfBtn = document.getElementById("exportPdf");
 
   // Root per Structural / Macro
   const legacyRoot = document.getElementById("checklistRoot");
@@ -166,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  // ---- SCORE PANEL (nuovo) ----
+  // ---- SCORE PANEL (solo barre) ----
   const CLARITY_STRUCTURAL_MAX = 190;
   const CLARITY_MACRO_MAX = 215;
   const CLARITY_TOTAL_MAX = CLARITY_STRUCTURAL_MAX + CLARITY_MACRO_MAX; // 405
@@ -191,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return ["Incomplete", "csp-badge-incomplete"];
   }
 
-    function updateClarityScorePanel(structuralScore, macroScore) {
+  function updateClarityScorePanel(structuralScore, macroScore) {
     const structuralScoreEl   = document.getElementById("clarityStructuralScore");
     const structuralBadgeEl   = document.getElementById("clarityStructuralBadge");
     const structuralBadgeTxt  = document.getElementById("clarityStructuralBadgeText");
@@ -202,11 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const macroBadgeTxt       = document.getElementById("clarityMacroBadgeText");
     const macroProgress       = document.getElementById("clarityMacroProgress");
 
-    // 🔹 nuovi: elementi per il totale globale
     const totalScoreEl        = document.getElementById("clarityTotalScore");
     const totalProgress       = document.getElementById("clarityTotalProgress");
 
-    // Se il pannello non è presente (ad es. in una versione vecchia) esci in silenzio
+    // se il pannello non esiste, esci
     if (!structuralScoreEl || !macroScoreEl) return;
 
     // Structural
@@ -231,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (macroProgress) macroProgress.style.width = `${macroPerc}%`;
 
-    // 🔹 TOTALE GLOBALE
+    // Totale globale
     if (totalScoreEl) {
       const totalScore = structuralScore + macroScore;
       totalScoreEl.textContent = `${totalScore} / ${CLARITY_TOTAL_MAX}`;
@@ -244,6 +245,210 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+    // ---- HELPERS PER EXPORT (totali + righe) ----
+  function getCurrentScoresFromState() {
+    let structuralScoreSum = 0;
+    let macroScoreSum = 0;
+
+    if (!checklistData || !Array.isArray(checklistData.sections)) {
+      return { structural: 0, macro: 0 };
+    }
+
+    checklistData.sections.forEach((section) => {
+      const isMacroSection =
+        typeof section.id === "string" &&
+        section.id.trim().toUpperCase().startsWith("M");
+
+      section.groups.forEach((group) => {
+        group.items.forEach((item) => {
+          const val = checklistState.scores[item.id];
+          const score = typeof val === "number" ? val : 0;
+          if (isMacroSection) {
+            macroScoreSum += score;
+          } else {
+            structuralScoreSum += score;
+          }
+        });
+      });
+    });
+
+    return { structural: structuralScoreSum, macro: macroScoreSum };
+  }
+
+  function buildExportRows() {
+    if (!checklistData || !Array.isArray(checklistData.sections)) {
+      alert("Checklist not loaded yet.");
+      return null;
+    }
+
+    const rows = [];
+
+    checklistData.sections.forEach((section) => {
+      const isMacroSection =
+        typeof section.id === "string" &&
+        section.id.trim().toUpperCase().startsWith("M");
+
+      const sectionType = isMacroSection ? "Macro-topic" : "Structural";
+
+      section.groups.forEach((group) => {
+        const groupCode = group.code || "";
+        const groupLabel = group.label || "";
+
+        group.items.forEach((item) => {
+          const rawVal = checklistState.scores[item.id];
+          const score =
+            typeof rawVal === "number" || typeof rawVal === "string"
+              ? rawVal
+              : "";
+
+          rows.push({
+            sectionType,
+            sectionId: section.id,
+            sectionLabel: section.label || "",
+            groupCode,
+            groupLabel,
+            itemId: item.id,
+            itemLabel: item.label || "",
+            score,
+          });
+        });
+      });
+    });
+
+    return rows;
+  }
+
+    function exportCsv() {
+    const rows = buildExportRows();
+    if (!rows) return;
+
+    const { structural, macro } = getCurrentScoresFromState();
+    const total = structural + macro;
+
+    const lines = [];
+
+    // Intestazione "Summary"
+    lines.push("Summary");
+    lines.push(`Structural total,${structural},/ ${CLARITY_STRUCTURAL_MAX}`);
+    lines.push(`Macro total,${macro},/ ${CLARITY_MACRO_MAX}`);
+    lines.push(`Global total,${total},/ ${CLARITY_TOTAL_MAX}`);
+    lines.push(""); // riga vuota
+
+    // Header tabellare
+    lines.push(
+      [
+        "SectionType",
+        "SectionId",
+        "SectionLabel",
+        "GroupCode",
+        "GroupLabel",
+        "ItemId",
+        "ItemLabel",
+        "Score",
+      ].join(",")
+    );
+
+    // Righe item
+    rows.forEach((r) => {
+      const values = [
+        r.sectionType,
+        r.sectionId,
+        r.sectionLabel,
+        r.groupCode,
+        r.groupLabel,
+        r.itemId,
+        r.itemLabel,
+        r.score,
+      ];
+
+      const escaped = values.map((v) => {
+        const s = String(v ?? "");
+        if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+          return `"${s.replace(/"/g, '""')}"`;
+        }
+        return s;
+      });
+
+      lines.push(escaped.join(","));
+    });
+
+    const blob = new Blob([lines.join("\r\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "clarity-checklist-results.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+    function exportPdf() {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      alert("PDF export not available (jsPDF not loaded).");
+      return;
+    }
+
+    const rows = buildExportRows();
+    if (!rows) return;
+
+    const { structural, macro } = getCurrentScoresFromState();
+    const total = structural + macro;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    // Titolo
+    doc.setFontSize(18);
+    doc.text("CLARITY AI – Checklist Results", 40, 40);
+
+    // Riepilogo
+    doc.setFontSize(11);
+    doc.text(
+      `Structural: ${structural}/${CLARITY_STRUCTURAL_MAX}   •   Macro: ${macro}/${CLARITY_MACRO_MAX}   •   Global: ${total}/${CLARITY_TOTAL_MAX}`,
+      40,
+      60
+    );
+
+    const head = [["Type", "Section", "Group", "Item", "Score"]];
+    const body = rows.map((r) => [
+      r.sectionType,
+      `${r.sectionId} – ${r.sectionLabel}`.trim(),
+      `${r.groupCode ? r.groupCode + " – " : ""}${r.groupLabel}`.trim(),
+      `${r.itemId} – ${r.itemLabel}`.trim(),
+      r.score === "" ? "-" : String(r.score),
+    ]);
+
+    if (typeof doc.autoTable === "function") {
+      doc.autoTable({
+        head,
+        body,
+        startY: 80,
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [10, 132, 255],
+          textColor: 255,
+        },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { cellWidth: 180 },
+          2: { cellWidth: 140 },
+          3: { cellWidth: 280 },
+          4: { cellWidth: 40, halign: "center" },
+        },
+      });
+    }
+
+    doc.save("clarity-checklist-results.pdf");
+  }
+
 
   // ---- STATE HELPERS ----
   function loadState() {
@@ -337,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
         groupEl.className = "group-card item-group";
         groupEl.dataset.groupId = groupId;
 
-        // Mappiamo il colore
+        // Colore del gruppo
         const colorKey = getColorKey(group);
         if (colorKey) {
           groupEl.classList.add(`item-group--${colorKey}`);
@@ -523,7 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
       checklistScoreMacro.textContent = `Total score: ${macroScoreSum}`;
     }
 
-    // 🔹 aggiorna anche il pannello a destra, se presente
+    // aggiorna pannello di destra
     updateClarityScorePanel(structuralScoreSum, macroScoreSum);
   }
 
@@ -552,7 +757,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!event.target.matches(".checklist-select")) return;
 
     const select = event.target;
-       const itemId = select.dataset.itemId;
+    const itemId = select.dataset.itemId;
     const value = select.value === "" ? null : Number(select.value);
 
     if (!itemId) return;
@@ -692,6 +897,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       persistState();
     });
+  }
+
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener("click", exportCsv);
+  }
+
+  if (exportPdfBtn) {
+    exportPdfBtn.addEventListener("click", exportPdf);
   }
 
   // ---- GUIDELINES COLLAPSE ----

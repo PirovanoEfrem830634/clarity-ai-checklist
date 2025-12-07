@@ -267,6 +267,14 @@
             <p class="csp-note">
               Score ranges follow CLARITY AI definitions for Structural and Macro-topic items.
             </p>
+            <div class="csp-export-actions">
+              <button id="exportCsv" class="btn-secondary btn-export">
+                Export CSV
+              </button>
+              <button id="exportPdf" class="btn-secondary btn-export">
+                Export PDF
+              </button>
+            </div>            
           </div>
         </aside>
       </div>
@@ -289,6 +297,9 @@
   </footer>
 
   <!-- JS esterno -->
+  <!-- jsPDF + AutoTable (per export PDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
   <script src="assets/js/app.js" defer></script>
 </body>
 </html>
