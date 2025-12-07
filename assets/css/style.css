@@ -128,8 +128,115 @@ body {
   padding: 22px 22px 26px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.hero-content {
+  max-width: 960px;
+  margin: 4px auto 0;
+  text-align: left;
+}
+
+/* Riga top: titolo a sinistra, CTA a destra */
+.hero-header-row {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.hero-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-header-cta {
+  flex-shrink: 0;
+}
+
+/* Logo nella card hero */
+.hero-logo-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Badge “C” con effetto floating glass + glow leggero */
+.hero-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+
+  /* glass base */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.15)
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+
+  /* layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  /* glow leggerissimo */
+  box-shadow:
+    0 14px 26px rgba(0, 0, 0, 0.16),
+    0 0 10px rgba(10, 132, 255, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.02);
+
+  /* testo */
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 20px;
+
+  /* animazioni hover */
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* alone: gradiente interno che richiama l’app icon */
+.hero-logo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 0%, #34c759 0, transparent 42%),
+    linear-gradient(135deg, #007aff, #34c759);
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+}
+
+/* lettera sopra il glass */
+.hero-logo::after {
+  content: "C";
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover: floating effect super delicato */
+.hero-logo:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.20),
+    0 0 14px rgba(10, 132, 255, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.02);
+  filter: brightness(1.06);
+}
+
+/* Bottone un filo più grande per sembrare CTA principale */
+.btn-primary.btn-primary-lg {
+  padding-inline: 24px;
+  padding-block: 10px;
+  font-size: 14px;
 }
 
 .hero-heading {
@@ -251,6 +358,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin: 0 auto 6px;
 }
 
 .pill-dot {
@@ -700,39 +808,38 @@ body {
   font-size: 24px;
   font-weight: 650;
   letter-spacing: -0.02em;
-  text-align: center;
-  margin: 6px 0 0;
+  text-align: left;
+  margin: 6px 0 2px;
 }
 
 .hero-subtitle-centered {
   font-size: 13px;
   font-weight: 500;
-  text-align: center;
+  text-align: left;
   color: var(--text-secondary);
-  margin: 2px 0 8px;
+  margin: 0 0 10px;
 }
 
 .hero-intro-text {
   font-size: 13px;
   line-height: 1.55;
   color: var(--text-secondary);
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto 4px;
+  text-align: left;
+  margin: 0 0 6px;
 }
 
 .hero-badges-centered {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .hero-actions-centered {
   display: flex;
-  justify-content: center;
-  margin-top: 14px;
+  justify-content: flex-start;
+  margin-top: 16px;
 }
 
 /* right panel */
@@ -914,3 +1021,103 @@ body {
               0 6px 14px rgba(0, 0, 0, 0.06);
 }
 
+/* ===== LOGIN PAGE ===== */
+
+.page-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-main {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.card-login {
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.login-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 6px 0 0;
+}
+
+.login-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.login-input {
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  padding: 9px 12px;
+  font-size: 14px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.login-input:focus {
+  border-color: rgba(0, 122, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.15),
+              0 8px 18px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+}
+
+.login-error {
+  min-height: 16px;
+  font-size: 12px;
+  color: #b00020;
+  margin: 0;
+}
+
+.login-actions {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* piccolo shake quando la password è sbagliata */
+.login-shake {
+  animation: login-shake 0.25s ease-in-out;
+}
+
+@keyframes login-shake {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-4px); }
+  50%  { transform: translateX(4px); }
+  75%  { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.login-note {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}

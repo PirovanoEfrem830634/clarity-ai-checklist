@@ -913,9 +913,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const guidelinesLabel = document.querySelector(".guidelines-toggle-label");
 
   if (guidelinesCard && guidelinesToggle && guidelinesLabel) {
-    guidelinesCard.classList.remove("collapsed");
-    guidelinesToggle.setAttribute("aria-expanded", "true");
-    guidelinesLabel.textContent = "Hide details";
+    // ✅ di default: SEZIONE CHIUSA
+    guidelinesCard.classList.add("collapsed");
+    guidelinesToggle.setAttribute("aria-expanded", "false");
+    guidelinesLabel.textContent = "Show details";
 
     guidelinesToggle.addEventListener("click", () => {
       const collapsed = guidelinesCard.classList.toggle("collapsed");
@@ -928,7 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
+  
   // ---- INIT ----
   loadState();
 
