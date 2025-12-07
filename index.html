@@ -139,72 +139,139 @@
         </div>
       </section>
 
-      <!-- CHECKLIST – STRUCTURAL ITEMS -->
-      <section
-        class="card card-checklist card-checklist--structural"
-        aria-label="CLARITY AI – Structural items"
-      >
-        <div class="checklist-header">
-          <div>
-            <div class="checklist-title">Structural items</div>
-            <div class="checklist-meta">
-              <span id="checklistCounter">0 items</span>
-              •
-              <span id="checklistScore">Total score: 0</span>
-              <span id="checklistMax" class="checklist-max"> / Max: 0</span>
+            <!-- WRAPPER CHECKLIST + SCORE PANEL -->
+      <div class="layout-checklists-with-panel">
+        <!-- COLONNA SINISTRA: LE DUE CHECKLIST  -->
+        <div class="layout-checklists-main">
+          <!-- CHECKLIST – STRUCTURAL ITEMS -->
+          <section
+            class="card card-checklist card-checklist--structural"
+            aria-label="CLARITY AI – Structural items"
+          >
+            <div class="checklist-header">
+              <div>
+                <div class="checklist-title">Structural items</div>
+                <div class="checklist-meta">
+                  <span id="checklistCounter">0 items</span>
+                  •
+                  <span id="checklistScore">Total score: 0</span>
+                  <span id="checklistMax" class="checklist-max"> / Max: 0</span>
+                </div>
+              </div>
+              <div class="checklist-actions-global">
+                <button id="commitAll" class="btn-secondary btn-small">
+                  Commit all
+                </button>
+                <button id="resetChecklist" class="btn-secondary btn-small btn-danger-soft">
+                  Reset all
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="checklist-actions-global">
-            <button id="commitAll" class="btn-secondary btn-small">
-              Commit all
-            </button>
-            <button id="resetChecklist" class="btn-secondary btn-small btn-danger-soft">
-              Reset all
-            </button>
-          </div>
-        </div>
 
-        <div
-          id="checklistRootStructural"
-          class="checklist-container checklist-container--structural"
-        >
-          <!-- Popolato da app.js: sezione structural -->
-        </div>
-      </section>
-
-      <!-- CHECKLIST – MACRO-TOPIC ITEMS -->
-      <section
-        class="card card-checklist card-checklist--macro"
-        aria-label="CLARITY AI – Macro-topic items"
-      >
-        <div class="checklist-header">
-          <div>
-            <div class="checklist-title">Macro-topic items</div>
-            <div class="checklist-meta">
-              <span id="checklistCounterMacro">0 items</span>
-              •
-              <span id="checklistScoreMacro">Total score: 0</span>
-              <span id="checklistMaxMacro" class="checklist-max"> / Max: 0</span>
+            <div
+              id="checklistRootStructural"
+              class="checklist-container checklist-container--structural"
+            >
+              <!-- Popolato da app.js: sezione structural -->
             </div>
-          </div>
+          </section>
 
-          <div class="checklist-actions-global">
-            <button id="commitAllMacro" class="btn-secondary btn-small">
-              Commit all
-            </button>
-            <button id="resetChecklistMacro" class="btn-secondary btn-small btn-danger-soft">
-              Reset all
-            </button>
-          </div>
+          <!-- CHECKLIST – MACRO-TOPIC ITEMS -->
+          <section
+            class="card card-checklist card-checklist--macro"
+            aria-label="CLARITY AI – Macro-topic items"
+          >
+            <div class="checklist-header">
+              <div>
+                <div class="checklist-title">Macro-topic items</div>
+                <div class="checklist-meta">
+                  <span id="checklistCounterMacro">0 items</span>
+                  •
+                  <span id="checklistScoreMacro">Total score: 0</span>
+                  <span id="checklistMaxMacro" class="checklist-max"> / Max: 0</span>
+                </div>
+              </div>
+
+              <div class="checklist-actions-global">
+                <button id="commitAllMacro" class="btn-secondary btn-small">
+                  Commit all
+                </button>
+                <button id="resetChecklistMacro" class="btn-secondary btn-small btn-danger-soft">
+                  Reset all
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="checklistRootMacro"
+              class="checklist-container checklist-container--macro"
+            >
+              <!-- Popolato da app.js: sezione macro-topic -->
+            </div>
+          </section>
         </div>
 
-        <div
-          id="checklistRootMacro"
-          class="checklist-container checklist-container--macro"
-        >
-          <!-- Popolato da app.js: sezione macro-topic -->
-        </div>
-      </section>
+        <!-- COLONNA DESTRA: SCORE PANEL SEMPRE VISIBILE -->
+        <aside class="clarity-score-panel" aria-label="CLARITY AI score overview">
+          <div class="csp-card">
+            <div class="csp-header">
+              <div>
+                <div class="csp-title">Score overview</div>
+                <div class="csp-caption">Updated as you complete the checklist</div>
+              </div>
+            </div>
+
+            <div class="csp-divider"></div>
+
+            <!-- Structural -->
+            <section class="csp-score-block" id="clarityStructuralBlock">
+              <div class="csp-score-header">
+                <span class="csp-score-label">Structural Items</span>
+                <span class="csp-score-value" id="clarityStructuralScore">0 / 190</span>
+              </div>
+              <div class="csp-badge csp-badge-incomplete" id="clarityStructuralBadge">
+                <span class="csp-badge-dot"></span>
+                <span id="clarityStructuralBadgeText">Incomplete</span>
+              </div>
+              <div class="csp-progress">
+                <div class="csp-progress-fill" id="clarityStructuralProgress"></div>
+              </div>
+            </section>
+
+            <!-- Macro Topic -->
+            <section class="csp-score-block" id="clarityMacroBlock">
+              <div class="csp-score-header">
+                <span class="csp-score-label">Macro Topic Items</span>
+                <span class="csp-score-value" id="clarityMacroScore">0 / 215</span>
+              </div>
+              <div class="csp-badge csp-badge-incomplete" id="clarityMacroBadge">
+                <span class="csp-badge-dot"></span>
+                <span id="clarityMacroBadgeText">Incomplete</span>
+              </div>
+              <div class="csp-progress">
+                <div class="csp-progress-fill" id="clarityMacroProgress"></div>
+              </div>
+            </section>
+
+            <!-- 🔹 GLOBAL CLARITY SCORE -->
+            <section class="csp-score-block csp-score-block--total" id="clarityTotalBlock">
+              <div class="csp-score-header">
+                <span class="csp-score-label">Global CLARITY score</span>
+                <span class="csp-score-value" id="clarityTotalScore">0 / 405</span>
+              </div>
+              <div class="csp-progress csp-progress--total">
+                <div class="csp-progress-fill" id="clarityTotalProgress"></div>
+              </div>
+            </section>
+
+            <p class="csp-note">
+              Score ranges follow CLARITY AI definitions for Structural and Macro-topic items.
+            </p>
+          </div>
+        </aside>
+      </div>
+      <!-- FINE WRAPPER CHECKLIST + SCORE PANEL -->
+
     </main>
   </div>
 

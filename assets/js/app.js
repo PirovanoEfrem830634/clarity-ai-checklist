@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     committedGroups: {}, // { [groupId]: true }
   };
 
-      // ---- MAPPING COLORI (arcobaleno Apple) ----
+  // ---- MAPPING COLORI (arcobaleno Apple) ----
   const COLOR_MAP = {
     /* =========================
        STRUCTURAL ITEMS (S)
@@ -132,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "transparency and reproducibility": "future",
   };
 
-
   function getColorKey(group) {
     const candidates = [];
 
@@ -165,6 +164,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return null;
+  }
+
+  // ---- SCORE PANEL (nuovo) ----
+  const CLARITY_STRUCTURAL_MAX = 190;
+  const CLARITY_MACRO_MAX = 215;
+  const CLARITY_TOTAL_MAX = CLARITY_STRUCTURAL_MAX + CLARITY_MACRO_MAX; // 405
+
+  function getStructuralLevel(score) {
+    if (score >= 171) return ["Excellent Completeness", "csp-badge-excellent"];
+    if (score >= 152) return ["High Completeness", "csp-badge-high"];
+    if (score >= 133) return ["Moderate Completeness", "csp-badge-moderate"];
+    if (score >= 114) return ["Basic Completeness", "csp-badge-basic"];
+    if (score >= 95)  return ["Low Completeness", "csp-badge-low"];
+    if (score >= 76)  return ["Very Low Completeness", "csp-badge-verylow"];
+    return ["Incomplete", "csp-badge-incomplete"];
+  }
+
+  function getMacroLevel(score) {
+    if (score >= 193) return ["Excellent Completeness", "csp-badge-excellent"];
+    if (score >= 171) return ["High Completeness", "csp-badge-high"];
+    if (score >= 150) return ["Moderate Completeness", "csp-badge-moderate"];
+    if (score >= 128) return ["Basic Completeness", "csp-badge-basic"];
+    if (score >= 107) return ["Low Completeness", "csp-badge-low"];
+    if (score >= 85)  return ["Very Low Completeness", "csp-badge-verylow"];
+    return ["Incomplete", "csp-badge-incomplete"];
+  }
+
+    function updateClarityScorePanel(structuralScore, macroScore) {
+    const structuralScoreEl   = document.getElementById("clarityStructuralScore");
+    const structuralBadgeEl   = document.getElementById("clarityStructuralBadge");
+    const structuralBadgeTxt  = document.getElementById("clarityStructuralBadgeText");
+    const structuralProgress  = document.getElementById("clarityStructuralProgress");
+
+    const macroScoreEl        = document.getElementById("clarityMacroScore");
+    const macroBadgeEl        = document.getElementById("clarityMacroBadge");
+    const macroBadgeTxt       = document.getElementById("clarityMacroBadgeText");
+    const macroProgress       = document.getElementById("clarityMacroProgress");
+
+    // 🔹 nuovi: elementi per il totale globale
+    const totalScoreEl        = document.getElementById("clarityTotalScore");
+    const totalProgress       = document.getElementById("clarityTotalProgress");
+
+    // Se il pannello non è presente (ad es. in una versione vecchia) esci in silenzio
+    if (!structuralScoreEl || !macroScoreEl) return;
+
+    // Structural
+    structuralScoreEl.textContent = `${structuralScore} / ${CLARITY_STRUCTURAL_MAX}`;
+    const [structLabel, structClass] = getStructuralLevel(structuralScore);
+    structuralBadgeTxt.textContent = structLabel;
+    structuralBadgeEl.className = `csp-badge ${structClass}`;
+    const structPerc = Math.max(
+      0,
+      Math.min(100, (structuralScore / CLARITY_STRUCTURAL_MAX) * 100)
+    );
+    if (structuralProgress) structuralProgress.style.width = `${structPerc}%`;
+
+    // Macro
+    macroScoreEl.textContent = `${macroScore} / ${CLARITY_MACRO_MAX}`;
+    const [macroLabel, macroClass] = getMacroLevel(macroScore);
+    macroBadgeTxt.textContent = macroLabel;
+    macroBadgeEl.className = `csp-badge ${macroClass}`;
+    const macroPerc = Math.max(
+      0,
+      Math.min(100, (macroScore / CLARITY_MACRO_MAX) * 100)
+    );
+    if (macroProgress) macroProgress.style.width = `${macroPerc}%`;
+
+    // 🔹 TOTALE GLOBALE
+    if (totalScoreEl) {
+      const totalScore = structuralScore + macroScore;
+      totalScoreEl.textContent = `${totalScore} / ${CLARITY_TOTAL_MAX}`;
+      const totalPerc = Math.max(
+        0,
+        Math.min(100, (totalScore / CLARITY_TOTAL_MAX) * 100)
+      );
+      if (totalProgress) {
+        totalProgress.style.width = `${totalPerc}%`;
+      }
+    }
   }
 
   // ---- STATE HELPERS ----
@@ -444,6 +522,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checklistScoreMacro) {
       checklistScoreMacro.textContent = `Total score: ${macroScoreSum}`;
     }
+
+    // 🔹 aggiorna anche il pannello a destra, se presente
+    updateClarityScorePanel(structuralScoreSum, macroScoreSum);
   }
 
   function updateGroupStatusVisual(groupId) {
@@ -471,7 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!event.target.matches(".checklist-select")) return;
 
     const select = event.target;
-    const itemId = select.dataset.itemId;
+       const itemId = select.dataset.itemId;
     const value = select.value === "" ? null : Number(select.value);
 
     if (!itemId) return;
@@ -576,38 +657,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (resetAllMacroBtn) {
-  resetAllMacroBtn.addEventListener("click", () => {
-    if (!confirm("Reset all MACRO sections?")) return;
+    resetAllMacroBtn.addEventListener("click", () => {
+      if (!confirm("Reset all MACRO sections?")) return;
 
-    const macroGroups = document.querySelectorAll(".card-checklist--macro .group-card");
+      const macroGroups = document.querySelectorAll(
+        ".card-checklist--macro .group-card"
+      );
 
-    macroGroups.forEach((group) => {
-      const selects = group.querySelectorAll(".checklist-select");
-      selects.forEach((s) => {
-        delete checklistState.scores[s.dataset.itemId];
-        s.value = "";
+      macroGroups.forEach((group) => {
+        const selects = group.querySelectorAll(".checklist-select");
+        selects.forEach((s) => {
+          delete checklistState.scores[s.dataset.itemId];
+          s.value = "";
+        });
+        delete checklistState.committedGroups[group.dataset.groupId];
+        updateGroupStatusVisual(group.dataset.groupId);
       });
-      delete checklistState.committedGroups[group.dataset.groupId];
-      updateGroupStatusVisual(group.dataset.groupId);
+
+      persistState();
+      updateScore();
     });
+  }
 
-    persistState();
-    updateScore();
-  });
-}
+  if (commitAllMacroBtn) {
+    commitAllMacroBtn.addEventListener("click", () => {
+      const macroGroups = document.querySelectorAll(
+        ".card-checklist--macro .group-card"
+      );
 
-if (commitAllMacroBtn) {
-  commitAllMacroBtn.addEventListener("click", () => {
-    const macroGroups = document.querySelectorAll(".card-checklist--macro .group-card");
+      macroGroups.forEach((g) => {
+        checklistState.committedGroups[g.dataset.groupId] = true;
+        updateGroupStatusVisual(g.dataset.groupId);
+      });
 
-    macroGroups.forEach((g) => {
-      checklistState.committedGroups[g.dataset.groupId] = true;
-      updateGroupStatusVisual(g.dataset.groupId);
+      persistState();
     });
-
-    persistState();
-  });
-}
+  }
 
   // ---- GUIDELINES COLLAPSE ----
   const guidelinesCard = document.querySelector(".card-guidelines");
