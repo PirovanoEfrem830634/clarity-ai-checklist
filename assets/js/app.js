@@ -945,8 +945,10 @@ document.addEventListener("DOMContentLoaded", () => {
           target.innerHTML =
             '<p style="font-size: 13px; color: #c00;">Invalid checklist configuration.</p>';
         }
+        document.body.classList.add("is-ready");
         return;
       }
+      document.body.classList.add("is-ready");
       buildChecklist(checklistData.sections);
     })
     .catch((err) => {
@@ -957,5 +959,6 @@ document.addEventListener("DOMContentLoaded", () => {
         target.innerHTML =
           '<p style="font-size: 13px; color: #c00;">Unable to load checklist configuration.</p>';
       }
+      document.body.classList.add("is-ready");
     });
 });

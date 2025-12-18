@@ -114,8 +114,6 @@ body {
 
 .card {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   border-radius: var(--radius-xl);
   padding: 22px 22px 20px;
   box-shadow: var(--shadow-soft);
@@ -174,8 +172,6 @@ body {
     rgba(255, 255, 255, 0.55),
     rgba(255, 255, 255, 0.15)
   );
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.85);
 
   /* layout */
@@ -605,7 +601,6 @@ body {
     0 4px 18px rgba(0, 0, 0, 0.05),
     0 1px 0 rgba(255, 255, 255, 0.8) inset;
 
-  backdrop-filter: blur(18px);
 }
 
 /* Bordino sinistro colorato */
@@ -865,7 +860,6 @@ body {
 
 .clarity-score-panel .csp-card {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
   border-radius: 22px;
   padding: 18px 18px 14px;
   border: 1px solid #e1e1e7;
@@ -1232,4 +1226,13 @@ body {
 
 .footer-link:hover {
   color: var(--accent);
+}
+
+body { 
+  opacity: 0; 
+  transition: opacity .15s ease-out; 
+}
+
+body.is-ready { 
+  opacity: 1; 
 }
